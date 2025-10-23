@@ -4,7 +4,7 @@ Tags: rank-math, seo, export, csv, analytics
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.14
+Stable tag: 1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,6 +29,7 @@ Posts CSV Export with Rank Math is a comprehensive export solution for WordPress
   * Categories
   * Rank Math Score (xx/100)
   * Rank Math Main Keyword
+  * Rank Math Additional Keywords
   * Rank Math Structured Data Type
   * Rank Math Internal Links
   * Rank Math External Links
@@ -84,6 +85,17 @@ The plugin exports data in CSV format, which can be opened in Excel, Google Shee
 
 == Changelog ==
 
+= 1.1 =
+* Version bump containing the 1.0.15 fixes and stability improvements
+* Critical fix: removed unsupported cache group deletion that could cause fatal errors during post save/delete
+* Improved DB compatibility: replaced INFORMATION_SCHEMA checks with `SHOW TABLES LIKE`
+* CSV header alignment: ensured "Additional Keywords" header matches output data
+
+= 1.0.15 =
+* Fixed fatal error on post save/delete by removing unsupported wp_cache_delete_group() usage
+* Replaced INFORMATION_SCHEMA table checks with `SHOW TABLES LIKE` for broader hosting compatibility
+* Re-added "Rank Math Additional Keywords" column and aligned CSV headers with data
+
 = 1.0.14 =
 * Fixed text domain mismatch for WordPress.org compliance
 * Updated all 47 text domain references from posts-csv-export-rank-math to posts-csv-export-with-rank-math
@@ -105,5 +117,5 @@ The plugin exports data in CSV format, which can be opened in Excel, Google Shee
 
 == Upgrade Notice ==
 
-= 1.0.13 =
-This version includes additional security improvements and WordPress coding standards compliance fixes. All Plugin Check issues have been resolved.
+= 1.1 =
+Important stability release. Fixes a potential fatal error triggered on post save/delete hooks and improves database compatibility for hosts that restrict INFORMATION_SCHEMA access. Also aligns CSV headers and data for Additional Keywords. Update recommended.

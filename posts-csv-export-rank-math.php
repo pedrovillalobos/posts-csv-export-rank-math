@@ -3,7 +3,7 @@
  * Plugin Name: Posts CSV Export with Rank Math
  * Plugin URI: https://github.com/pedrovillalobos/posts-csv-export-with-rank-math
  * Description: Export WordPress posts with Rank Math SEO data to CSV format including scores, keywords, structured data, and link information.
- * Version: 1.0.14
+ * Version: 1.1
  * Author: Pedro Villalobos
  * Author URI: https://villalobos.com.br
  * License: GPL v3 or later
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 
 // Define plugin constants only if not already defined
 if (!defined('PCERM_VERSION')) {
-    define('PCERM_VERSION', '1.0.14');
+    define('PCERM_VERSION', '1.1');
 }
 if (!defined('PCERM_PLUGIN_URL')) {
     define('PCERM_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -438,6 +438,7 @@ if (!class_exists('Posts_CSV_Export_Rank_Math')) {
             'Categories',
             'Rank Math Score',
             'Rank Math Main Keyword',
+            'Rank Math Additional Keywords',
             'Rank Math Structured Data Type',
             'Rank Math Internal Links',
             'Rank Math External Links',
@@ -480,6 +481,10 @@ if (!class_exists('Posts_CSV_Export_Rank_Math')) {
             // Rank Math Main Keyword - try multiple possible meta keys
             $rank_math_keyword = $this->get_rank_math_keyword($post->ID);
             $row[] = $this->escape_csv_value($rank_math_keyword);
+            
+            // Rank Math Additional Keywords - try multiple possible meta keys
+            $rank_math_additional_keywords = $this->get_rank_math_additional_keywords($post->ID);
+            $row[] = $this->escape_csv_value($rank_math_additional_keywords);
             
             // Rank Math Structured Data Type - try multiple possible meta keys
             $rank_math_schema = $this->get_rank_math_schema($post->ID);
@@ -550,9 +555,11 @@ if (!class_exists('Posts_CSV_Export_Rank_Math')) {
         $table_exists = wp_cache_get($cache_key);
         
         if (false === $table_exists) {
-            // Use a more WordPress-friendly approach to check table existence
+            // Use a safer approach that doesn't require INFORMATION_SCHEMA privileges
+            // Escape LIKE wildcards to ensure exact match behavior
+            $like = $wpdb->esc_like($table_name);
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-            $result = $wpdb->get_results($wpdb->prepare("SELECT 1 FROM information_schema.tables WHERE table_schema = %s AND table_name = %s", DB_NAME, $table_name));
+            $result = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $like));
             $table_exists = !empty($result);
             wp_cache_set($cache_key, $table_exists, '', 3600); // Cache for 1 hour
         }
@@ -1217,8 +1224,8 @@ if (!class_exists('Posts_CSV_Export_Rank_Math')) {
             wp_cache_delete($cache_key);
         }
         
-        // Clear the posts query cache as well
-        wp_cache_delete_group('pcer_posts_');
+        // Note: Core object cache doesn't support group deletion universally.
+        // If using a persistent cache, site owners can flush as needed.
     }
     
     /**

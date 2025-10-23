@@ -20,6 +20,7 @@ A WordPress plugin to export post information with Rank Math SEO data to CSV for
   - Categories
   - Rank Math Score (xx/100)
   - Rank Math Main Keyword
+  - Rank Math Additional Keywords
   - Rank Math Structured Data Type
   - Rank Math Internal Links
   - Rank Math External Links
@@ -162,6 +163,20 @@ GitHub: [https://github.com/pedrovillalobos](https://github.com/pedrovillalobos)
 This plugin is licensed under the GPL v2 or later.
 
 ## Changelog
+
+### Version 1.1
+
+- Version bump with stability improvements from 1.0.15
+- Critical stability fix: removed unsupported cache group deletion that could cause fatals
+- Database compatibility: switched table checks to `SHOW TABLES LIKE`
+- CSV correctness: ensured Additional Keywords column and header alignment
+
+### Version 1.0.15
+
+- Fixed fatal error when saving/deleting posts by removing unsupported `wp_cache_delete_group()` call
+- Hardened DB table existence checks by switching to `SHOW TABLES LIKE` (avoids INFORMATION_SCHEMA permissions issues)
+- Restored and aligned CSV column for “Rank Math Additional Keywords” and header consistency
+- Minor comments and internal docs updates
 
 ### Version 1.0.10
 
